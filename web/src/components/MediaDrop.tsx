@@ -8,10 +8,11 @@ type Props = {
   onChange: (f: File | null) => void;
   accept?: string;
   label?: string;
+  hint?: string;
   compact?: boolean;
 };
 
-export function MediaDrop({ file, onChange, accept = 'image/*,video/*,audio/*,.glb,.gltf', label, compact }: Props) {
+export function MediaDrop({ file, onChange, accept = 'image/*,video/*,audio/*,.glb,.gltf', label, hint, compact }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   const [preview, setPreview] = useState<string>();
@@ -58,7 +59,7 @@ export function MediaDrop({ file, onChange, accept = 'image/*,video/*,audio/*,.g
           <div style={{ fontFamily: 'var(--font-display)', fontSize: compact ? '1rem' : '1.25rem' }}>
             {label ?? 'Drop your work here'}
           </div>
-          {!compact && <div className="hint">Image, video, audio or 3D model (.glb), up to 50 MB</div>}
+          {!compact && <div className="hint">{hint ?? 'Image, video, audio or 3D model (.glb), up to 50 MB'}</div>}
         </div>
       )}
       {file && preview && (

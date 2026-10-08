@@ -4,7 +4,7 @@ import { OPEN_BOOK_ADDRESS } from '@/lib/chains';
 
 const FEATURES = [
   { icon: '◇', title: 'Any chain', text: 'Ethereum, Base, Arbitrum, Optimism, Polygon and Zora, with one contract address on all of them.' },
-  { icon: '▶', title: 'Any medium', text: 'Images, video, audio and 3D models, pinned to IPFS with full traits.' },
+  { icon: '▶', title: 'Stored on-chain', text: 'Images and metadata live inside the contract itself, with no IPFS link to rot. Video, audio and 3D can use IPFS.' },
   { icon: '⌘', title: 'Your own collection', text: 'Launch a collection with royalties, a price, supply cap, mint window and allowlist.' },
   { icon: '∞', title: 'Soulbound option', text: 'Mint credentials and badges that can never be transferred (ERC-5192).' },
 ];

@@ -203,7 +203,12 @@ export function SealForm({ collection, chainId: fixedChainId, price = 0n, proof 
 
   return (
     <form className="card stack" onSubmit={seal}>
-      <MediaDrop file={file} onChange={setFile} accept={ipfsEnabled === false ? 'image/*' : undefined} />
+      <MediaDrop
+        file={file}
+        onChange={setFile}
+        accept={ipfsEnabled === false ? 'image/*' : undefined}
+        hint={ipfsEnabled === false ? 'Any image. It’s compressed and stored fully on-chain.' : undefined}
+      />
       {file && kind && kind !== 'image' && (
         <MediaDrop
           compact
