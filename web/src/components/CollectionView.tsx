@@ -15,7 +15,8 @@ type CollectionMeta = {
   name?: string;
   description?: string;
   image?: string;
-  shuin?: { allowlist?: string };
+  /** Inline address list, or an IPFS URI of a StandardMerkleTree dump. */
+  shuin?: { allowlist?: string | string[] };
 };
 
 function when(ts: bigint) {
@@ -53,8 +54,9 @@ export function CollectionView({ chainId, address }: { chainId: number; address:
     queryKey: ['allowlist', allowlistUri, me],
     enabled: !!allowlistUri && !!me,
     queryFn: async (): Promise<Hex[] | null> => {
-      const dump = await (await fetch(gatewayUrl(allowlistUri)!)).json();
-      const tree = StandardMerkleTree.load<[string]>(dump);
+      const tree = Array.isArray(allowlistUri)
+        ? StandardMerkleTree.of(allowlistUri.map((a) => [a]), ['address'])
+        : StandardMerkleTree.load<[string]>(await (await fetch(gatewayUrl(allowlistUri)!)).json());
       for (const [i, [a]] of tree.entries()) {
         if (a.toLowerCase() === me!.toLowerCase()) return tree.getProof(i) as Hex[];
       }

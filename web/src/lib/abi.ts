@@ -3,8 +3,27 @@
 export const shuinCollectionAbi = [
   {
     "type": "constructor",
-    "inputs": [],
+    "inputs": [
+      {
+        "name": "store_",
+        "type": "address",
+        "internalType": "contract ShuinStore"
+      }
+    ],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "STORE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract ShuinStore"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -272,6 +291,45 @@ export const shuinCollectionAbi = [
   },
   {
     "type": "function",
+    "name": "mintOnChain",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "metaJson",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "mime",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "chunks",
+        "type": "bytes[]",
+        "internalType": "bytes[]"
+      },
+      {
+        "name": "proof",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
     "name": "name",
     "inputs": [],
     "outputs": [
@@ -279,6 +337,30 @@ export const shuinCollectionAbi = [
         "name": "",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "onChainToken",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "metaFile",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "mediaFile",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
     "stateMutability": "view"
@@ -872,6 +954,31 @@ export const shuinCollectionAbi = [
   },
   {
     "type": "event",
+    "name": "SealedOnChain",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "metaFile",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "mediaFile",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "Transfer",
     "inputs": [
       {
@@ -1145,7 +1252,13 @@ export const shuinCollectionAbi = [
 export const shuinFactoryAbi = [
   {
     "type": "constructor",
-    "inputs": [],
+    "inputs": [
+      {
+        "name": "store",
+        "type": "address",
+        "internalType": "contract ShuinStore"
+      }
+    ],
     "stateMutability": "nonpayable"
   },
   {

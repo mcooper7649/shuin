@@ -62,7 +62,7 @@ export function explorerAddress(chainId: number, address: string): string | unde
  * The factory is deployed through the canonical CREATE2 deployer, so its address is
  * the same everywhere. Whether a given chain actually has it is checked at runtime.
  */
-export const FACTORY_ADDRESS: Address = '0xce678Cb3Fd98A121a5989ab7469adF81D5A644ac';
+export const FACTORY_ADDRESS: Address = '0x93402c8A271eD3e66da117e08386CB670A982811';
 
 export const OPEN_BOOK_ADDRESS = (process.env.NEXT_PUBLIC_OPEN_BOOK || undefined) as
   | Address

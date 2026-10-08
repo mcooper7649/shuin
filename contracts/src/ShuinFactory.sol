@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 import {ShuinCollection} from "./ShuinCollection.sol";
+import {ShuinStore} from "./ShuinStore.sol";
 
 /// @title ShuinFactory
 /// @notice Deploys ShuinCollection clones. The factory itself is deployed through the
@@ -12,8 +13,8 @@ contract ShuinFactory {
 
     event CollectionCreated(address indexed creator, address indexed collection, string name, string symbol);
 
-    constructor() {
-        implementation = address(new ShuinCollection());
+    constructor(ShuinStore store) {
+        implementation = address(new ShuinCollection(store));
     }
 
     function createCollection(

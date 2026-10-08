@@ -7,11 +7,13 @@ import { getAddress, isAddress, parseEther, parseEventLogs, toHex, zeroHash, typ
 import { useAccount, useBytecode, useChainId, usePublicClient, useSwitchChain, useWriteContract } from 'wagmi';
 import { shuinFactoryAbi } from '@/lib/abi';
 import { FACTORY_ADDRESS, shrineFor } from '@/lib/chains';
-import { pinFile, pinJson } from '@/lib/ipfs';
+import { pinJson } from '@/lib/ipfs';
+import { blobToDataUri, fitImage, jsonDataUri, ONCHAIN_ALLOWLIST_MAX, ONCHAIN_COVER_BUDGET } from '@/lib/onchain';
+import { useIpfsEnabled } from '@/lib/useIpfsEnabled';
 import { MediaDrop } from './MediaDrop';
 import { Steps, type StepState } from './Steps';
 
-const STEP_LABELS = ['Pin cover and collection details', 'Sign in your wallet', 'Deploy your collection'];
+const STEP_LABELS = ['Prepare cover and collection details', 'Sign in your wallet', 'Deploy your collection'];
 
 /** Parse pasted addresses or a CSV. Takes the first 0x… token on each line. */
 function parseAllowlist(text: string): { addresses: Address[]; bad: number } {
@@ -40,6 +42,7 @@ export function LaunchForm() {
   const publicClient = usePublicClient({ chainId });
   const { data: factoryCode } = useBytecode({ address: FACTORY_ADDRESS, chainId });
   const factoryLive = !!factoryCode && factoryCode !== '0x';
+  const ipfsEnabled = useIpfsEnabled();
 
   const [cover, setCover] = useState<File | null>(null);
   const [name, setName] = useState('');
@@ -74,29 +77,36 @@ export function LaunchForm() {
       return setError('Price must be a number, like 0.01.');
     }
     if (start && end && toUnix(end) <= toUnix(start)) return setError('The mint window must end after it starts.');
+    const bigAllowlist = allowlist.addresses.length > ONCHAIN_ALLOWLIST_MAX;
+    if (bigAllowlist && !ipfsEnabled) {
+      return setError(`Allowlists over ${ONCHAIN_ALLOWLIST_MAX} addresses need IPFS, which isn’t configured here.`);
+    }
 
     setError(undefined);
     setFailedAt(-1);
     let current = 0;
     try {
       setStep((current = 0));
-      const coverPin = cover ? await pinFile(cover) : undefined;
+      // Collection details live on-chain in contractURI as a data: URI, with the cover as a small
+      // WebP thumbnail. Only allowlists too big to inline go to IPFS.
+      const image = cover ? await blobToDataUri((await fitImage(cover, ONCHAIN_COVER_BUDGET)).blob) : undefined;
       let allowlistRoot: Hex = zeroHash;
-      let allowlistUri: string | undefined;
+      let allowlistField: string | string[] | undefined;
       if (allowlist.addresses.length) {
         const tree = StandardMerkleTree.of(allowlist.addresses.map((a) => [a]), ['address']);
         allowlistRoot = tree.root as Hex;
-        allowlistUri = (await pinJson(tree.dump(), `${symbol}-allowlist.json`)).uri;
+        allowlistField = bigAllowlist
+          ? (await pinJson(tree.dump(), `${symbol}-allowlist.json`)).uri
+          : allowlist.addresses;
       }
-      const contractMeta = {
+      const contractUri = jsonDataUri({
         name: name.trim(),
         description: description.trim(),
-        image: coverPin?.uri,
+        image,
         seller_fee_basis_points: royaltyBps,
         fee_recipient: address,
-        shuin: { allowlist: allowlistUri },
-      };
-      const metaPin = await pinJson(contractMeta, `${symbol}-collection.json`);
+        shuin: allowlistField ? { allowlist: allowlistField } : undefined,
+      });
 
       setStep((current = 1));
       if (walletChainId !== chainId) await switchChainAsync({ chainId });
@@ -110,7 +120,7 @@ export function LaunchForm() {
           salt,
           name.trim(),
           symbol.trim().toUpperCase(),
-          metaPin.uri,
+          contractUri,
           address,
           BigInt(royaltyBps),
           {
@@ -148,6 +158,7 @@ export function LaunchForm() {
       <div className="card stack">
         <span className="section-title">The collection</span>
         <MediaDrop file={cover} onChange={setCover} accept="image/*" label="Cover image" />
+        <span className="hint">Stored on-chain with the collection as a small thumbnail.</span>
         <div className="row">
           <label className="field">
             <span>Name</span>
@@ -204,7 +215,7 @@ export function LaunchForm() {
           <textarea className="input mono" value={allowlistText} onChange={(e) => setAllowlistText(e.target.value)} placeholder={'One address per line, or paste a CSV\n0x…'} />
           <span className="hint">
             {allowlist.addresses.length
-              ? `${allowlist.addresses.length} address${allowlist.addresses.length === 1 ? '' : 'es'}${allowlist.bad ? `, ${allowlist.bad} line(s) skipped` : ''}. Only these wallets can mint.`
+              ? `${allowlist.addresses.length} address${allowlist.addresses.length === 1 ? '' : 'es'}${allowlist.bad ? `, ${allowlist.bad} line(s) skipped` : ''}. Only these wallets can mint.${allowlist.addresses.length > ONCHAIN_ALLOWLIST_MAX ? ' Lists this long are stored on IPFS.' : ''}`
               : 'Leave empty to let anyone mint.'}
           </span>
         </label>

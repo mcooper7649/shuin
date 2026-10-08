@@ -69,3 +69,8 @@ export async function POST(req: NextRequest) {
   }
   return NextResponse.json({ cid, uri: `ipfs://${cid}` });
 }
+
+/** Lets the UI know whether IPFS uploads are available on this deployment. */
+export async function GET() {
+  return NextResponse.json({ enabled: !!process.env.PINATA_JWT || devStoreEnabled() });
+}

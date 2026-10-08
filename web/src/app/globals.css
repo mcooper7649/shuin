@@ -202,3 +202,13 @@ footer.foot { border-top: 1px solid var(--line); padding: 22px 0 40px; color: va
   .nav { order: 3; width: 100%; }
   .topbar > .btn { margin-left: auto; }
 }
+
+/* ── segmented control ── */
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--paper); width: fit-content; }
+.segmented button {
+  appearance: none; border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 0.92rem;
+  padding: 8px 14px; cursor: pointer;
+}
+.segmented button + button { border-left: 1px solid var(--line); }
+.segmented button[aria-checked='true'] { background: var(--seal); color: #fff8f0; }
+.segmented button:disabled { opacity: .45; cursor: not-allowed; }
