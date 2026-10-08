@@ -32,9 +32,15 @@ export const SHRINES: ShrineInfo[] = [
   { chain: zora, mark: 'Z', ink: '#3a3a3a', testnet: false },
 ];
 
-const showMainnets = process.env.NEXT_PUBLIC_ENABLE_MAINNETS === '1';
+/** Comma-separated chain ids to offer, e.g. "8453,84532". Defaults to the testnets. */
+const enabledIds = (process.env.NEXT_PUBLIC_CHAINS || `${sepolia.id},${baseSepolia.id}`)
+  .split(',')
+  .map((id) => Number(id.trim()));
 
-export const ENABLED_SHRINES = SHRINES.filter((s) => s.testnet || showMainnets);
+// Keep the order of the env list so the first id is the default chain.
+export const ENABLED_SHRINES = enabledIds
+  .map((id) => SHRINES.find((s) => s.chain.id === id))
+  .filter((s): s is ShrineInfo => !!s);
 
 export const ENABLED_CHAINS = ENABLED_SHRINES.map((s) => s.chain) as [Chain, ...Chain[]];
 

@@ -18,7 +18,7 @@ Shuin is the successor to [nft-minter-project](https://github.com/mcooper7649/nf
 
 ## Chains
 
-Sepolia and Base Sepolia are on by default. Set `NEXT_PUBLIC_ENABLE_MAINNETS=1` to show Ethereum, Base, Arbitrum, Optimism, Polygon and Zora. A chain only works once the factory has been deployed there; the UI checks this itself.
+`NEXT_PUBLIC_CHAINS` (comma-separated chain ids, first is the default) picks which chains the app offers: Ethereum, Base, Arbitrum, Optimism, Polygon, Zora, Sepolia and Base Sepolia are supported. The default is Sepolia and Base Sepolia. A chain only works once the factory has been deployed there; the UI checks this itself.
 
 The factory is deployed through the canonical CREATE2 deployer, so it has the same address on every chain: `0xce678Cb3Fd98A121a5989ab7469adF81D5A644ac`. That address only holds while the bytecode is unchanged. After changing the contracts, run `scripts/sync-abi.sh`. It regenerates the ABI and writes the new address into `web/src/lib/chains.ts` and this README. The shared **Shuin Open Book** collection's address depends on the deployer key. Use the same key everywhere to keep it identical too.
 
