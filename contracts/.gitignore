@@ -3,3 +3,4 @@ cache
 broadcast/*/31337
 # local anvil runs that reuse a testnet chain id
 broadcast/**/dry-run
+**/*.recovery.lock

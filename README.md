@@ -8,6 +8,23 @@ The name comes from *goshuin*, the ink seals travelers collect from shrine to sh
 
 Shuin is the successor to [nft-minter-project](https://github.com/mcooper7649/nft-minter-project), a single-contract Ropsten minter.
 
+## Deployments
+
+Live at **https://shuin.mycodedojo.com** (Base).
+
+| Contract | Base (8453) |
+| --- | --- |
+| ShuinStore (on-chain files) | [`0xADD96c1484575Fb37431f95e14eCAE73cE9bC612`](https://basescan.org/address/0xADD96c1484575Fb37431f95e14eCAE73cE9bC612) |
+| ShuinFactory | [`0x93402c8A271eD3e66da117e08386CB670A982811`](https://basescan.org/address/0x93402c8A271eD3e66da117e08386CB670A982811) |
+| ShuinCollection implementation | [`0x2812B78BD6670073593389216BD932F5e68b59e6`](https://basescan.org/address/0x2812B78BD6670073593389216BD932F5e68b59e6) |
+| Shuin Open Book | [`0xb44eDc7577A500F94498c19d9D2cDBe4e12a1B6a`](https://basescan.org/address/0xb44eDc7577A500F94498c19d9D2cDBe4e12a1B6a) |
+
+Source is verified on [Sourcify](https://sourcify.dev/).
+
+## On-chain storage
+
+Images can be stored fully on-chain instead of on IPFS. `ShuinStore` writes file bytes into the code of small data contracts (the SSTORE2 pattern), up to 24,575 bytes per chunk and content-addressed, so duplicate files are free. `ShuinCollection.mintOnChain` stores the image and metadata JSON there, and `tokenURI` returns them as a `data:application/json;base64,…` URI built on-chain, with no gateway, pinning service or server involved. The app compresses images in the browser to 48 KB (WebP) so a mint fits in one transaction. On Base that costs well under a cent. Collection details (name, description, cover thumbnail and allowlists of up to 100 addresses) go into `contractURI` as a data URI too.
+
 ## Layout
 
 | Path | What |
