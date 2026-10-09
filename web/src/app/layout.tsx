@@ -12,6 +12,15 @@ export const metadata: Metadata = {
   title: 'Shuin: leave your mark on any chain',
   description: 'Mint NFTs and launch collections on Ethereum, Base, Arbitrum, Optimism, Polygon and Zora.',
   icons: { icon: '/icon.svg' },
+  metadataBase: new URL('https://shuin.mycodedojo.com'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Shuin',
+    title: 'Shuin: leave your mark on any chain',
+    description: 'Mint NFTs and launch collections with images stored fully on-chain.',
+    images: [{ url: '/og.jpg', width: 1200, height: 627, alt: 'Shuin: leave your mark, on any chain' }],
+  },
+  twitter: { card: 'summary_large_image' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
